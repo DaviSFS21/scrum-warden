@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+enum Role {
+  SM
+  PO
+  MEMBER
+}
+
+model User {
+  id           String       @id @default(cuid())
+  email        String       @unique
+  name         String
+  password     String
+  role         Role         @default(MEMBER)
+  active       Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+  pointEntries PointEntry[]
+  expulsions   Expulsion[]
+}
+
+model Sprint {
+  id           String       @id @default(cuid())
+  name         String
+  startDate    DateTime
+  endDate      DateTime
+  active       Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+  pointEntries PointEntry[]
+  expulsions   Expulsion[]
+}
+
+model Rule {
+  id           String       @id @default(cuid())
+  name         String
+  description  String
+  points       Int
+  active       Boolean      @default(true)
+  pointEntries PointEntry[]
+}
+
+model PointEntry {
+  id            String    @id @default(cuid())
+  userId        String
+  sprintId      String
+  ruleId        String?
+  points        Int
+  note          String?
+  isGoldenRule  Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  user          User      @relation(fields: [userId], references: [id])
+  sprint        Sprint    @relation(fields: [sprintId], references: [id])
+  rule          Rule?     @relation(fields: [ruleId], references: [id])
+}
+
+model Expulsion {
+  id          String    @id @default(cuid())
+  userId      String
+  sprintId    String
+  reason      String
+  expelledAt  DateTime  @default(now())
+  user        User      @relation(fields: [userId], references: [id])
+  sprint      Sprint    @relation(fields: [sprintId], references: [id])
+}

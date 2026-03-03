@@ -1,0 +1,39 @@
+import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+export declare class UsersController {
+    private usersService;
+    constructor(usersService: UsersService);
+    findAll(): Promise<{
+        email: string;
+        id: string;
+        name: string;
+        role: import("@prisma/client").$Enums.Role;
+        active: boolean;
+        createdAt: Date;
+    }[]>;
+    findOne(id: string): Promise<{
+        email: string;
+        id: string;
+        name: string;
+        role: import("@prisma/client").$Enums.Role;
+        active: boolean;
+        createdAt: Date;
+    }>;
+    create(dto: CreateUserDto): Promise<{
+        email: string;
+        id: string;
+        name: string;
+        role: import("@prisma/client").$Enums.Role;
+        active: boolean;
+    }>;
+    deactivate(id: string): Promise<{
+        id: string;
+        name: string;
+        active: boolean;
+    }>;
+    activate(id: string): Promise<{
+        id: string;
+        name: string;
+        active: boolean;
+    }>;
+}
