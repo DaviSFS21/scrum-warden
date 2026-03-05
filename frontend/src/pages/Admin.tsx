@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
-import { Settings, Users, AlertTriangle, Trash2 } from 'lucide-react';
+import { Settings, Users, Trash2 } from 'lucide-react';
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState<'sprints' | 'rules' | 'members'>('sprints');
