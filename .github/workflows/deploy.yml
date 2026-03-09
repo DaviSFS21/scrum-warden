@@ -47,6 +47,7 @@ jobs:
             backend/node_modules/
             backend/prisma/
             backend/package.json
+          include-hidden-files: true
           retention-days: 1
 
   # ── Job 2: Build React/Vite frontend ─────────────────────────────────────
