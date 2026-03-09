@@ -98,18 +98,18 @@ jobs:
           name: frontend-dist
           path: deploy/frontend
 
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.VM_SSH_KEY }}" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H "${{ secrets.VM_HOST }}" >> ~/.ssh/known_hosts
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.VM_SSH_KEY }}
+
+      - name: Add VM to known hosts
+        run: ssh-keyscan -H "${{ secrets.VM_HOST }}" >> ~/.ssh/known_hosts
 
       # ── Copy backend build to VM ─────────────────────────────────────────
       - name: Copy backend to VM
         run: |
           rsync -az --delete \
-            -e "ssh -i ~/.ssh/deploy_key" \
             deploy/backend/ \
             ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:~/scrum-warden/backend/
 
@@ -117,7 +117,6 @@ jobs:
       - name: Copy frontend to VM
         run: |
           rsync -az --delete \
-            -e "ssh -i ~/.ssh/deploy_key" \
             deploy/frontend/ \
             ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:/var/www/scrum-warden/
 
@@ -125,7 +124,6 @@ jobs:
       - name: Copy infra files to VM
         run: |
           rsync -az \
-            -e "ssh -i ~/.ssh/deploy_key" \
             docker-compose.infra.yml \
             frontend/nginx.conf \
             ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:~/scrum-warden/
@@ -133,8 +131,7 @@ jobs:
       # ── Apply migrations and restart app on VM ───────────────────────────
       - name: Deploy on VM
         run: |
-          ssh -i ~/.ssh/deploy_key \
-            ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
+          ssh ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
             set -e
             cd ~/scrum-warden
 
@@ -170,8 +167,7 @@ jobs:
           EOF
 
       # ── Verify ───────────────────────────────────────────────────────────
-      - name: Verify containers
+      - name: Verify
         run: |
-          ssh -i ~/.ssh/deploy_key \
-            ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} \
+          ssh ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} \
             "docker compose -f ~/scrum-warden/docker-compose.infra.yml ps && pm2 show scrum-warden-backend"
