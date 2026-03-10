@@ -25,10 +25,9 @@ services:
     restart: unless-stopped
     network_mode: host
     volumes:
-      # Frontend static files (copied here by GH Actions)
       - /var/www/scrum-warden:/usr/share/nginx/html:ro
-      # nginx config (copied to VM on first setup or via deploy)
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       postgres:
         condition: service_healthy
