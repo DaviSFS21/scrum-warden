@@ -166,13 +166,14 @@ jobs:
 
             # Run pending migrations
             cd backend
+            set -a && source .env && set +a
             npx prisma migrate deploy
 
-            # Restart backend with PM2
-            pm2 restart scrum-warden-backend \
+            # Restart backend with PM2 (env vars inherited from sourced .env)
+            pm2 restart scrum-warden-backend --update-env \
               || pm2 start dist/main.js \
                    --name scrum-warden-backend \
-                   --env production
+                   --cwd ~/scrum-warden/backend
 
             pm2 save
           EOF

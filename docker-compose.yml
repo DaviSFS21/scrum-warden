@@ -25,6 +25,8 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
+    extra_hosts:
+      - "host-gateway:host-gateway"
     volumes:
       # Frontend static files (copied here by GH Actions)
       - /var/www/scrum-warden:/usr/share/nginx/html:ro
