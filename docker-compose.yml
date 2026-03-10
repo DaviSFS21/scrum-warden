@@ -7,62 +7,36 @@ services:
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-scrumwarden}
       POSTGRES_USER: ${POSTGRES_USER:-scrumwarden}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-scrumwarden}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - scrum-warden-net
+    # Only expose internally; backend accesses via localhost (host network)
+    network_mode: host
+    ports:
+      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-scrumwarden}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # ── Backend (NestJS + Prisma + PostgreSQL) ────────────────────────────────
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: scrum-warden-backend
+  # ── nginx ────────────────────────────────────────────────────────────────
+  nginx:
+    image: nginx:stable-alpine
+    container_name: scrum-warden-nginx
     restart: unless-stopped
-    environment:
-      NODE_ENV: production
-      PORT: 3000
-      DATABASE_URL: postgresql://${POSTGRES_USER:-scrumwarden}:${POSTGRES_PASSWORD:-scrumwarden}@postgres:5432/${POSTGRES_DB:-scrumwarden}
-      JWT_SECRET: ${JWT_SECRET:-scrum-warden-super-secret-jwt-key-change-in-production}
-      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
-      CORS_ORIGIN: "*"
+    network_mode: host
+    ports:
+      - "80:80"
+    volumes:
+      # Frontend static files (copied here by GH Actions)
+      - /var/www/scrum-warden:/usr/share/nginx/html:ro
+      # nginx config (copied to VM on first setup or via deploy)
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       postgres:
         condition: service_healthy
-    networks:
-      - scrum-warden-net
-    healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "3000"]
-      interval: 15s
-      timeout: 5s
-      retries: 3
-      start_period: 20s
-
-  # ── Frontend (React/Vite + nginx) ─────────────────────────────────────────
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: scrum-warden-frontend
-    restart: unless-stopped
-    ports:
-      - "${APP_PORT:-80}:80"
-    depends_on:
-      backend:
-        condition: service_healthy
-    networks:
-      - scrum-warden-net
 
 volumes:
   postgres_data:
     driver: local
-
-networks:
-  scrum-warden-net:
-    driver: bridge

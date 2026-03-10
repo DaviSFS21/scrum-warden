@@ -127,7 +127,7 @@ jobs:
       - name: Copy infra files to VM
         run: |
           rsync -az \
-            docker-compose.infra.yml \
+            docker-compose.yml \
             frontend/nginx.conf \
             ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:~/scrum-warden/
 
@@ -154,7 +154,7 @@ jobs:
             cp .env backend/.env
 
             # Start / update postgres and nginx (never removes volumes)
-            docker compose -f docker-compose.infra.yml up -d
+            docker compose -f docker-compose.yml up -d
 
             # Run pending migrations
             cd backend
@@ -173,4 +173,4 @@ jobs:
       - name: Verify
         run: |
           ssh ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} \
-            "docker compose -f ~/scrum-warden/docker-compose.infra.yml ps && pm2 show scrum-warden-backend"
+            "docker compose -f ~/scrum-warden/docker-compose.yml ps && pm2 show scrum-warden-backend"
