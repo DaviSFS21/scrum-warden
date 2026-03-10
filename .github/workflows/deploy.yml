@@ -109,6 +109,14 @@ jobs:
       - name: Add VM to known hosts
         run: ssh-keyscan -H "${{ secrets.VM_HOST }}" >> ~/.ssh/known_hosts
 
+      - name: Prepare VM directories
+        run: |
+          ssh ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} "
+            mkdir -p ~/scrum-warden/backend
+            sudo mkdir -p /var/www/scrum-warden
+            sudo chown -R \$USER:\$USER ~/scrum-warden /var/www/scrum-warden
+          "
+
       # ── Copy backend build to VM ─────────────────────────────────────────
       - name: Copy backend to VM
         run: |

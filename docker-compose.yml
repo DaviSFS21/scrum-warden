@@ -10,8 +10,6 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    # Only expose internally; backend accesses via localhost (host network)
-    network_mode: host
     ports:
       - "5432:5432"
     healthcheck:
@@ -25,7 +23,6 @@ services:
     image: nginx:stable-alpine
     container_name: scrum-warden-nginx
     restart: unless-stopped
-    network_mode: host
     ports:
       - "80:80"
     volumes:
