@@ -21,7 +21,7 @@ export default function Daily() {
 
   useEffect(() => {
     Promise.all([
-      api.get('/users').then(res => setMembers(res.data.filter((u: any) => u.role !== 'SM' && u.active))),
+      api.get('/users').then(res => setMembers(res.data)),
       api.get('/rules').then(res => setRules(res.data)),
       api.get('/sprints').then(res => setSprints(res.data.filter((s:any) => s.active)))
     ]).finally(() => setLoading(false));

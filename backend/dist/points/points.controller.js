@@ -34,6 +34,9 @@ let PointsController = class PointsController {
     add(dto) {
         return this.pointsService.add(dto);
     }
+    remove(id) {
+        return this.pointsService.remove(id);
+    }
 };
 exports.PointsController = PointsController;
 __decorate([
@@ -59,6 +62,15 @@ __decorate([
     __metadata("design:paramtypes", [add_point_dto_1.AddPointDto]),
     __metadata("design:returntype", void 0)
 ], PointsController.prototype, "add", null);
+__decorate([
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(role_enum_1.Role.SM),
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], PointsController.prototype, "remove", null);
 exports.PointsController = PointsController = __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, common_1.Controller)('points'),

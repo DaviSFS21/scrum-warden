@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { SprintsService } from './sprints.service';
 import { CreateSprintDto } from './dto/create-sprint.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -40,5 +40,12 @@ export class SprintsController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: Partial<CreateSprintDto>) {
     return this.sprintsService.update(id, dto);
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles(Role.SM)
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.sprintsService.remove(id);
   }
 }

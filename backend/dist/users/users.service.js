@@ -90,6 +90,28 @@ let UsersService = class UsersService {
             select: { id: true, name: true, active: true },
         });
     }
+    async update(id, dto) {
+        if (dto.email) {
+            const existing = await this.prisma.user.findUnique({ where: { email: dto.email } });
+            if (existing && existing.id !== id) {
+                throw new common_1.ConflictException('E-mail já cadastrado por outro usuário.');
+            }
+        }
+        const updateData = { ...dto };
+        if (dto.password) {
+            updateData.password = await bcrypt.hash(dto.password, 10);
+        }
+        return this.prisma.user.update({
+            where: { id },
+            data: updateData,
+            select: { id: true, name: true, email: true, role: true, active: true },
+        });
+    }
+    async remove(id) {
+        await this.prisma.pointEntry.deleteMany({ where: { userId: id } });
+        await this.prisma.expulsion.deleteMany({ where: { userId: id } });
+        return this.prisma.user.delete({ where: { id } });
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([

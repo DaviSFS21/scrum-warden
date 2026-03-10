@@ -18,13 +18,13 @@ export declare class PointsService {
         } | null;
     } & {
         id: string;
-        createdAt: Date;
-        points: number;
         userId: string;
         sprintId: string;
         ruleId: string | null;
+        points: number;
         note: string | null;
         isGoldenRule: boolean;
+        createdAt: Date;
     })[]>;
     add(dto: AddPointDto): Promise<{
         user: {
@@ -41,15 +41,16 @@ export declare class PointsService {
         } | null;
     } & {
         id: string;
-        createdAt: Date;
-        points: number;
         userId: string;
         sprintId: string;
         ruleId: string | null;
+        points: number;
         note: string | null;
         isGoldenRule: boolean;
+        createdAt: Date;
     }>;
     private checkAndExpel;
+    private recalculateExpulsion;
     getExpulsions(): Promise<({
         user: {
             id: string;
@@ -66,4 +67,14 @@ export declare class PointsService {
         reason: string;
         expelledAt: Date;
     })[]>;
+    remove(id: string): Promise<{
+        id: string;
+        userId: string;
+        sprintId: string;
+        ruleId: string | null;
+        points: number;
+        note: string | null;
+        isGoldenRule: boolean;
+        createdAt: Date;
+    } | null>;
 }

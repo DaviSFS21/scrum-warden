@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -37,5 +37,17 @@ export class UsersController {
   @Patch(':id/activate')
   activate(@Param('id') id: string) {
     return this.usersService.activate(id);
+  }
+
+  @Roles(Role.SM)
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() dto: Partial<CreateUserDto>) {
+    return this.usersService.update(id, dto);
+  }
+
+  @Roles(Role.SM)
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.usersService.remove(id);
   }
 }

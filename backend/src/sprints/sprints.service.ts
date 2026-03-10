@@ -36,4 +36,10 @@ export class SprintsService {
     if (dto.endDate) data.endDate = new Date(dto.endDate);
     return this.prisma.sprint.update({ where: { id }, data });
   }
+
+  async remove(id: string) {
+    await this.prisma.pointEntry.deleteMany({ where: { sprintId: id } });
+    await this.prisma.expulsion.deleteMany({ where: { sprintId: id } });
+    return this.prisma.sprint.delete({ where: { id } });
+  }
 }

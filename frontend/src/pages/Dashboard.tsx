@@ -19,12 +19,17 @@ export default function Dashboard() {
   const [sprint, setSprint] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
+  const [rules, setRules] = useState<any[]>([]);
 
   useEffect(() => {
-    api.get('/dashboard')
-      .then(res => {
-        setMembers(res.data.members.filter((m: any) => m.role !== 'SM'));
-        setSprint(res.data.sprint);
+    Promise.all([
+      api.get('/dashboard'),
+      api.get('/rules')
+    ])
+      .then(([dashboardRes, rulesRes]) => {
+        setMembers(dashboardRes.data.members);
+        setSprint(dashboardRes.data.sprint);
+        setRules(rulesRes.data);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -153,6 +158,30 @@ export default function Dashboard() {
             Nenhum membro encontrado. Acesse o painel Admin para criar.
           </div>
         )}
+      </div>
+
+      <div className="mt-8 border-t border-slate-800 pt-6">
+        <h3 className="text-xl font-bold tracking-tight mb-4">Regras de Penalidade</h3>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {rules.filter(r => r.active).map(rule => (
+            <div key={rule.id} className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+              <div>
+                <div className="flex justify-between items-start mb-2">
+                  <h4 className="font-semibold text-slate-200">{rule.name}</h4>
+                  <span className="bg-red-500/20 text-red-400 text-xs font-bold px-2 py-1 rounded">
+                    {rule.points} pts
+                  </span>
+                </div>
+                <p className="text-sm text-slate-400">{rule.description}</p>
+              </div>
+            </div>
+          ))}
+          {rules.length === 0 && (
+            <div className="col-span-full py-6 text-center text-slate-500">
+              Nenhuma regra ativa no momento.
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

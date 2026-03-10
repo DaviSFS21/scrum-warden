@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Body, Query, UseGuards } from '@nestjs/common';
 import { PointsService } from './points.service';
 import { AddPointDto } from './dto/add-point.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -26,5 +26,12 @@ export class PointsController {
   @Post()
   add(@Body() dto: AddPointDto) {
     return this.pointsService.add(dto);
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles(Role.SM)
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.pointsService.remove(id);
   }
 }

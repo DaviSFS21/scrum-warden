@@ -1,0 +1,2 @@
+.env
+backend/prisma/dev.db

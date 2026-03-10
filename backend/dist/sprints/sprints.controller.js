@@ -40,6 +40,9 @@ let SprintsController = class SprintsController {
     update(id, dto) {
         return this.sprintsService.update(id, dto);
     }
+    remove(id) {
+        return this.sprintsService.remove(id);
+    }
 };
 exports.SprintsController = SprintsController;
 __decorate([
@@ -83,6 +86,15 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], SprintsController.prototype, "update", null);
+__decorate([
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(role_enum_1.Role.SM),
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], SprintsController.prototype, "remove", null);
 exports.SprintsController = SprintsController = __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, common_1.Controller)('sprints'),

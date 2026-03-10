@@ -82,6 +82,30 @@ let PointsService = class PointsService {
             });
         }
     }
+    async recalculateExpulsion(userId) {
+        const expulsion = await this.prisma.expulsion.findFirst({ where: { userId } });
+        if (!expulsion)
+            return;
+        const sprintId = expulsion.sprintId;
+        const hasGolden = await this.prisma.pointEntry.findFirst({
+            where: { userId, sprintId: expulsion.sprintId, isGoldenRule: true },
+        });
+        if (hasGolden)
+            return;
+        const sprintPoints = await this.prisma.pointEntry.aggregate({
+            where: { userId, sprintId: expulsion.sprintId },
+            _sum: { points: true },
+        });
+        if ((sprintPoints._sum.points ?? 0) >= SPRINT_LIMIT)
+            return;
+        const globalPoints = await this.prisma.pointEntry.aggregate({
+            where: { userId },
+            _sum: { points: true },
+        });
+        if ((globalPoints._sum.points ?? 0) >= GLOBAL_LIMIT)
+            return;
+        await this.prisma.expulsion.delete({ where: { id: expulsion.id } });
+    }
     async getExpulsions() {
         return this.prisma.expulsion.findMany({
             include: {
@@ -90,6 +114,16 @@ let PointsService = class PointsService {
             },
             orderBy: { expelledAt: 'desc' },
         });
+    }
+    async remove(id) {
+        const entry = await this.prisma.pointEntry.findUnique({ where: { id } });
+        if (!entry)
+            return null;
+        const result = await this.prisma.pointEntry.delete({
+            where: { id },
+        });
+        await this.recalculateExpulsion(entry.userId);
+        return result;
     }
 };
 exports.PointsService = PointsService;

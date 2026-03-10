@@ -18,13 +18,13 @@ export declare class PointsController {
         } | null;
     } & {
         id: string;
-        createdAt: Date;
-        points: number;
         userId: string;
         sprintId: string;
         ruleId: string | null;
+        points: number;
         note: string | null;
         isGoldenRule: boolean;
+        createdAt: Date;
     })[]>;
     getExpulsions(): Promise<({
         user: {
@@ -57,12 +57,22 @@ export declare class PointsController {
         } | null;
     } & {
         id: string;
-        createdAt: Date;
-        points: number;
         userId: string;
         sprintId: string;
         ruleId: string | null;
+        points: number;
         note: string | null;
         isGoldenRule: boolean;
+        createdAt: Date;
     }>;
+    remove(id: string): Promise<{
+        id: string;
+        userId: string;
+        sprintId: string;
+        ruleId: string | null;
+        points: number;
+        note: string | null;
+        isGoldenRule: boolean;
+        createdAt: Date;
+    } | null>;
 }

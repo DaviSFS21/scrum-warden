@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { api } from '../lib/api';
 import { format } from 'date-fns';
-import { ArrowLeft, History } from 'lucide-react';
+import { ArrowLeft, History, Trash2 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export default function Ledger() {
+  const { user: currentUser } = useAuth();
   const { userId } = useParams();
   const [entries, setEntries] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
@@ -15,6 +17,13 @@ export default function Ledger() {
       api.get(`/points?userId=${userId}`).then(res => setEntries(res.data));
     }
   }, [userId]);
+
+  const handleDeleteEntry = async (entryId: string) => {
+    if (confirm('Tem certeza que deseja remover esta infração?')) {
+      await api.delete(`/points/${entryId}`);
+      setEntries(entries.filter(e => e.id !== entryId));
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -52,8 +61,19 @@ export default function Ledger() {
                       </span>
                     )}
                   </div>
-                  <div className={`text-lg font-bold flex-shrink-0 ml-4 ${entry.isGoldenRule ? 'text-red-500' : 'text-yellow-500'}`}>
-                    +{entry.points} pts
+                  <div className="flex items-center">
+                    <div className={`text-lg font-bold flex-shrink-0 ml-4 ${entry.isGoldenRule ? 'text-red-500' : 'text-yellow-500'}`}>
+                      +{entry.points} pts
+                    </div>
+                    {currentUser?.role === 'SM' && (
+                      <button 
+                        onClick={() => handleDeleteEntry(entry.id)}
+                        title="Remover Infração"
+                        className="ml-4 p-2 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    )}
                   </div>
                 </div>
               </li>
