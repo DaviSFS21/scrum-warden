@@ -23,10 +23,7 @@ services:
     image: nginx:stable-alpine
     container_name: scrum-warden-nginx
     restart: unless-stopped
-    ports:
-      - "80:80"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    network_mode: host
     volumes:
       # Frontend static files (copied here by GH Actions)
       - /var/www/scrum-warden:/usr/share/nginx/html:ro
