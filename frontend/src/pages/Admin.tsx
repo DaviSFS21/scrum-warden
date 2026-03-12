@@ -138,7 +138,7 @@ export default function Admin() {
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               activeTab === tab 
-                ? 'bg-indigo-600 text-white' 
+                ? 'bg-slate-100 text-slate-900 font-bold' 
                 : 'bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-white'
             }`}
           >
@@ -165,7 +165,7 @@ export default function Admin() {
                 <label className="block text-xs text-slate-400 mb-1">Fim</label>
                 <input required type="date" className="w-full bg-slate-950 border border-slate-700 rounded p-2 text-sm" value={newSprint.endDate} onChange={e => setNewSprint({...newSprint, endDate: e.target.value})} />
               </div>
-              <button type="submit" className="bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded text-sm font-medium">Criar Sprint</button>
+              <button type="submit" className="bg-slate-100 hover:bg-white text-slate-900 p-2 rounded text-sm font-bold">Criar Sprint</button>
             </form>
 
             <table className="w-full text-left text-sm">
@@ -199,7 +199,7 @@ export default function Admin() {
                           </span>
                         </td>
                         <td className="py-3 flex gap-2 items-center min-h-[50px]">
-                          {!s.active && <button onClick={() => handleActivateSprint(s.id)} className="text-indigo-400 hover:text-indigo-300 text-xs font-medium">Ativar Sprint</button>}
+                          {!s.active && <button onClick={() => handleActivateSprint(s.id)} className="text-slate-300 hover:text-white text-xs font-medium">Ativar Sprint</button>}
                           <button onClick={() => startEditSprint(s)} className="text-slate-400 hover:text-slate-200" title="Editar Sprint"><Edit2 className="w-4 h-4"/></button>
                           <button onClick={() => handleDeleteSprint(s.id)} className="text-red-500/70 hover:text-red-400" title="Excluir Sprint"><Trash2 className="w-4 h-4"/></button>
                         </td>
@@ -261,7 +261,7 @@ export default function Admin() {
                     <button 
                       onClick={() => startEditRule(rule)}
                       title="Editar Critério"
-                      className="p-1.5 text-slate-400 hover:text-indigo-400 hover:bg-indigo-400/10 rounded-lg transition-colors"
+                      className="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors"
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>

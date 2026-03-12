@@ -72,7 +72,7 @@ export default function Dashboard() {
             disabled={exporting}
             className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium rounded-lg transition-colors border border-slate-700 disabled:opacity-50"
           >
-            {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4 text-indigo-400" />}
+            {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4 text-slate-200" />}
             <span className="hidden sm:inline">Exportar Relatório</span>
             <span className="sm:hidden">Exportar</span>
           </button>

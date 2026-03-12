@@ -89,7 +89,7 @@ export default function Daily() {
       <div className="border-b border-slate-800 pb-4 flex justify-between items-end">
         <div>
           <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            <CheckSquare className="w-6 h-6 text-indigo-400" />
+            <CheckSquare className="w-6 h-6 text-slate-200" />
             Registro de Daily
           </h2>
           <p className="text-slate-400 text-sm mt-1">Selecione as falhas/atrasos ocorridos hoje.</p>
@@ -97,7 +97,7 @@ export default function Daily() {
         <div className="flex flex-col">
           <label className="text-xs text-slate-500 mb-1">Sprint Ativa</label>
           <select 
-            className="bg-slate-900 border border-slate-700 text-sm rounded-lg px-3 py-1.5 focus:ring-indigo-500"
+            className="bg-slate-900 border border-slate-700 text-sm rounded-lg px-3 py-1.5 focus:ring-slate-500"
             value={activeSprintId}
             onChange={e => setActiveSprintId(e.target.value)}
           >
@@ -120,7 +120,7 @@ export default function Daily() {
         <div className="space-y-4">
           {members.map(member => (
             <div key={member.id} className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-              <h3 className="font-semibold text-lg mb-4 text-indigo-100">{member.name}</h3>
+              <h3 className="font-semibold text-lg mb-4 text-slate-100">{member.name}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {rules.map(rule => (
                   <label key={rule.id} className="flex items-start gap-3 p-3 rounded-lg border border-slate-800 hover:bg-slate-800/50 cursor-pointer transition-colors group">
@@ -129,7 +129,7 @@ export default function Daily() {
                         type="checkbox"
                         checked={(selections[member.id] || []).includes(rule.id)}
                         onChange={() => toggleRule(member.id, rule.id)}
-                        className="w-4 h-4 rounded border-slate-600 text-indigo-600 focus:ring-indigo-600/50 bg-slate-950/50"
+                        className="w-4 h-4 rounded border-slate-600 text-slate-600 focus:ring-slate-600/50 bg-slate-950/50"
                       />
                     </div>
                     <div>
@@ -165,7 +165,7 @@ export default function Daily() {
             <button
               onClick={handleSubmit}
               disabled={submitting || sprints.length === 0}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-6 rounded-lg shadow-lg shadow-indigo-900/20 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-slate-100 hover:bg-white text-slate-900 font-bold py-2.5 px-6 rounded-lg shadow-lg shadow-slate-900/20 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Registrar Penalidades'}
             </button>

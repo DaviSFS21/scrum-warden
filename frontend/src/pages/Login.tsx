@@ -32,8 +32,8 @@ export default function Login() {
     <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-4">
       <div className="w-full max-w-sm bg-slate-900 rounded-2xl p-8 shadow-xl border border-slate-800">
         <div className="flex flex-col items-center mb-8">
-          <div className="w-12 h-12 bg-indigo-500/10 rounded-xl flex items-center justify-center mb-4">
-            <ShieldAlert className="w-6 h-6 text-indigo-500" />
+          <div className="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center mb-4">
+            <ShieldAlert className="w-6 h-6 text-slate-200" />
           </div>
           <h1 className="text-2xl font-bold text-white tracking-tight">Scrum Warden</h1>
           <p className="text-slate-400 text-sm mt-1">Gestão de Critérios de Permanência</p>
@@ -51,7 +51,7 @@ export default function Login() {
             <input
               type="email"
               required
-              className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent"
               placeholder="seu@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -62,7 +62,7 @@ export default function Login() {
             <input
               type="password"
               required
-              className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -71,7 +71,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition-colors flex justify-center items-center mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-slate-100 hover:bg-white text-slate-900 font-bold py-2.5 rounded-lg transition-colors flex justify-center items-center mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Entrar'}
           </button>
