@@ -43,8 +43,6 @@ export class ExportService {
     markdown += `|------------|--------|---------------|----------------|--------|\n`;
 
     for (const user of users) {
-      if (user.role === 'SM') continue; // Hide SM from scoreboard
-
       const sprintPointsAgg = await this.prisma.pointEntry.aggregate({
         where: { userId: user.id, sprintId: activeSprint.id },
         _sum: { points: true },
