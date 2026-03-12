@@ -16,7 +16,7 @@ export class AuthService {
       where: { email: dto.email },
     });
 
-    if (!user || !user.active) {
+    if (!user?.active) {
       throw new UnauthorizedException('E-mail não autorizado ou conta inativa.');
     }
 
