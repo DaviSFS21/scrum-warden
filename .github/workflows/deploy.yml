@@ -35,7 +35,7 @@ jobs:
       - name: Generate Prisma Client (with arm64 binary)
         working-directory: backend
         env:
-          DATABASE_URL: postgresql://scrumwarden:scrumwarden@localhost:5432/scrumwarden
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: npx prisma generate
 
       - name: Upload backend artifact
