@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { api } from '../lib/api';
 import { format } from 'date-fns';
-import { ArrowLeft, History, Trash2 } from 'lucide-react';
+import { ArrowLeft, History, Trash2, Edit2, Check, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Ledger() {
@@ -10,6 +10,27 @@ export default function Ledger() {
   const { userId } = useParams();
   const [entries, setEntries] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
+  
+  const [editingEntry, setEditingEntry] = useState<string | null>(null);
+  const [editPoints, setEditPoints] = useState<number>(0);
+
+  const startEditEntry = (entry: any) => {
+    setEditingEntry(entry.id);
+    setEditPoints(entry.points);
+  };
+
+  const handleUpdateEntry = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingEntry) return;
+    try {
+      await api.patch(`/points/${editingEntry}`, { points: Number(editPoints) });
+      setEntries(entries.map(e => e.id === editingEntry ? { ...e, points: Number(editPoints) } : e));
+      setEditingEntry(null);
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao atualizar os pontos.');
+    }
+  };
 
   useEffect(() => {
     if (userId) {
@@ -62,17 +83,47 @@ export default function Ledger() {
                     )}
                   </div>
                   <div className="flex items-center">
-                    <div className={`text-lg font-bold flex-shrink-0 ml-4 ${entry.isGoldenRule ? 'text-red-500' : 'text-yellow-500'}`}>
-                      +{entry.points} pts
-                    </div>
-                    {currentUser?.role === 'SM' && (
-                      <button 
-                        onClick={() => handleDeleteEntry(entry.id)}
-                        title="Remover Infração"
-                        className="ml-4 p-2 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
+                    {editingEntry === entry.id ? (
+                      <form onSubmit={handleUpdateEntry} className="flex items-center gap-2 ml-4">
+                        <input
+                          type="number"
+                          required
+                          min="0"
+                          value={editPoints}
+                          onChange={(e) => setEditPoints(parseInt(e.target.value) || 0)}
+                          className="w-20 bg-slate-900 border border-slate-700 rounded p-1 text-center font-bold text-slate-200"
+                        />
+                        <button type="submit" className="p-1.5 text-emerald-500 hover:bg-emerald-500/10 rounded">
+                          <Check className="w-5 h-5" />
+                        </button>
+                        <button type="button" onClick={() => setEditingEntry(null)} className="p-1.5 text-slate-500 hover:bg-slate-500/10 rounded">
+                          <X className="w-5 h-5" />
+                        </button>
+                      </form>
+                    ) : (
+                      <>
+                        <div className={`text-lg font-bold flex-shrink-0 ml-4 ${entry.isGoldenRule ? 'text-red-500' : 'text-yellow-500'}`}>
+                          +{entry.points} pts
+                        </div>
+                        {currentUser?.role === 'SM' && (
+                          <div className="flex ml-4 gap-1">
+                            <button 
+                              onClick={() => startEditEntry(entry)}
+                              title="Editar Pontos"
+                              className="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button 
+                              onClick={() => handleDeleteEntry(entry.id)}
+                              title="Remover Infração"
+                              className="p-2 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>

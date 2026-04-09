@@ -1,0 +1,15 @@
+{
+  "name": "scrum-warden",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "install:both": "concurrently -c \"cyan,yellow\" -n \" back  , front \" \"cd backend && npm i && npx prisma migrate dev\" \"cd frontend && npm i\"",
+    "serve:both": "concurrently -c \"cyan,yellow\" -n \" back  , front \" \"cd backend && npm run start:dev\" \"cd frontend && npm run dev\""
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

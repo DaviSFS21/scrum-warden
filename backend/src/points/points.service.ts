@@ -120,6 +120,23 @@ export class PointsService {
     });
   }
 
+  async update(id: string, points: number) {
+    const entry = await this.prisma.pointEntry.update({
+      where: { id },
+      data: { points },
+      include: {
+        user: { select: { id: true, name: true } },
+        rule: { select: { id: true, name: true } },
+        sprint: { select: { id: true, name: true } },
+      },
+    });
+
+    await this.recalculateExpulsion(entry.userId);
+    await this.checkAndExpel(entry.userId, entry.sprintId, entry.isGoldenRule);
+
+    return entry;
+  }
+
   async remove(id: string) {
     const entry = await this.prisma.pointEntry.findUnique({ where: { id } });
     if (!entry) return null;
