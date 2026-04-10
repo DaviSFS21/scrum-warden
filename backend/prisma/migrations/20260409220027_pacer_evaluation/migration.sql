@@ -1,4 +1,4 @@
-﻿-- CreateTable
+-- CreateTable
 CREATE TABLE "PacerEvaluation" (
     "id" TEXT NOT NULL,
     "sprintId" TEXT NOT NULL,
