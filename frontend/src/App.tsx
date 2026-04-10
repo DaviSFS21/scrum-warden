@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard';
 import Ledger from './pages/Ledger';
 import Daily from './pages/Daily';
 import Admin from './pages/Admin';
+import Pacer from './pages/Pacer';
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<Layout />}>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/pacer" element={<Pacer />} />
               <Route path="/ledger/:userId" element={<Ledger />} />
               
               <Route element={<ProtectedRoute allowedRoles={['SM']} />}>

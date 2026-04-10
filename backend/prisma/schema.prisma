@@ -15,26 +15,29 @@ enum Role {
 }
 
 model User {
-  id           String       @id @default(cuid())
-  email        String       @unique
-  name         String
-  password     String
-  role         Role         @default(MEMBER)
-  active       Boolean      @default(true)
-  createdAt    DateTime     @default(now())
-  pointEntries PointEntry[]
-  expulsions   Expulsion[]
+  id                  String            @id @default(cuid())
+  email               String            @unique
+  name                String
+  password            String
+  role                Role              @default(MEMBER)
+  active              Boolean           @default(true)
+  createdAt           DateTime          @default(now())
+  pointEntries        PointEntry[]
+  expulsions          Expulsion[]
+  evaluationsGiven    PacerEvaluation[] @relation("Evaluator")
+  evaluationsReceived PacerEvaluation[] @relation("Evaluatee")
 }
 
 model Sprint {
-  id           String       @id @default(cuid())
-  name         String
-  startDate    DateTime
-  endDate      DateTime
-  active       Boolean      @default(false)
-  createdAt    DateTime     @default(now())
-  pointEntries PointEntry[]
-  expulsions   Expulsion[]
+  id               String            @id @default(cuid())
+  name             String
+  startDate        DateTime
+  endDate          DateTime
+  active           Boolean           @default(false)
+  createdAt        DateTime          @default(now())
+  pointEntries     PointEntry[]
+  expulsions       Expulsion[]
+  pacerEvaluations PacerEvaluation[]
 }
 
 model Rule {
@@ -47,25 +50,43 @@ model Rule {
 }
 
 model PointEntry {
-  id            String    @id @default(cuid())
-  userId        String
-  sprintId      String
-  ruleId        String?
-  points        Int
-  note          String?
-  isGoldenRule  Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  user          User      @relation(fields: [userId], references: [id])
-  sprint        Sprint    @relation(fields: [sprintId], references: [id])
-  rule          Rule?     @relation(fields: [ruleId], references: [id])
+  id           String   @id @default(cuid())
+  userId       String
+  sprintId     String
+  ruleId       String?
+  points       Int
+  note         String?
+  isGoldenRule Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id])
+  sprint       Sprint   @relation(fields: [sprintId], references: [id])
+  rule         Rule?    @relation(fields: [ruleId], references: [id])
 }
 
 model Expulsion {
-  id          String    @id @default(cuid())
-  userId      String
-  sprintId    String
-  reason      String
-  expelledAt  DateTime  @default(now())
-  user        User      @relation(fields: [userId], references: [id])
-  sprint      Sprint    @relation(fields: [sprintId], references: [id])
+  id         String   @id @default(cuid())
+  userId     String
+  sprintId   String
+  reason     String
+  expelledAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  sprint     Sprint   @relation(fields: [sprintId], references: [id])
+}
+
+model PacerEvaluation {
+  id            String   @id @default(cuid())
+  sprintId      String
+  evaluatorId   String
+  evaluateeId   String
+  proactivity   Int
+  autonomy      Int
+  collaboration Int
+  delivery      Int
+  createdAt     DateTime @default(now())
+
+  sprint    Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  evaluator User   @relation("Evaluator", fields: [evaluatorId], references: [id], onDelete: Cascade)
+  evaluatee User   @relation("Evaluatee", fields: [evaluateeId], references: [id], onDelete: Cascade)
+
+  @@unique([sprintId, evaluatorId, evaluateeId])
 }

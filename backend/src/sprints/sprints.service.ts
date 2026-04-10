@@ -40,6 +40,7 @@ export class SprintsService {
   async remove(id: string) {
     await this.prisma.pointEntry.deleteMany({ where: { sprintId: id } });
     await this.prisma.expulsion.deleteMany({ where: { sprintId: id } });
+    await this.prisma.pacerEvaluation.deleteMany({ where: { sprintId: id } });
     return this.prisma.sprint.delete({ where: { id } });
   }
 }

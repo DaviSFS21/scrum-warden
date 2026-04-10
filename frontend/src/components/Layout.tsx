@@ -1,6 +1,6 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { ShieldAlert, LogOut, LayoutDashboard, ClipboardList, Shield } from 'lucide-react';
+import { ShieldAlert, LogOut, LayoutDashboard, ClipboardList, Shield, Star } from 'lucide-react';
 
 export const Layout = () => {
   const { user, logout } = useAuth();
@@ -53,6 +53,7 @@ export const Layout = () => {
 
       <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 h-14 bg-slate-900/90 backdrop-blur-md border border-slate-700 rounded-2xl md:hidden flex items-center justify-center gap-2 px-3 shadow-2xl z-50">
         {navLink('/', <LayoutDashboard className="w-5 h-5" />, 'Painel')}
+        {navLink('/pacer', <Star className="w-5 h-5" />, 'PACER')}
         {user?.role === 'SM' && navLink('/daily', <ClipboardList className="w-5 h-5" />, 'Daily')}
         {user?.role === 'SM' && navLink('/admin', <Shield className="w-5 h-5" />, 'Admin')}
       </nav>
@@ -61,6 +62,9 @@ export const Layout = () => {
       <div className="hidden md:flex fixed top-14 bottom-0 left-0 w-64 bg-slate-900 border-r border-slate-800 flex-col p-4 gap-2">
          <Link to="/" className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${location.pathname==='/'?'bg-slate-100 text-slate-900 font-bold':'text-slate-300 hover:bg-slate-800/50'}`}>
           <LayoutDashboard className="w-4 h-4"/> Painel
+         </Link>
+         <Link to="/pacer" className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${location.pathname==='/pacer'?'bg-slate-100 text-slate-900 font-bold':'text-slate-300 hover:bg-slate-800/50'}`}>
+          <Star className="w-4 h-4"/> PACER
          </Link>
          {user?.role === 'SM' && (
            <>

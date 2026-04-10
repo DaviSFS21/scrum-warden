@@ -9,6 +9,7 @@ import { PointsModule } from './points/points.module';
 import { DailyModule } from './daily/daily.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ExportModule } from './export/export.module';
+import { PacerModule } from './pacer/pacer.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ExportModule } from './export/export.module';
     DailyModule,
     DashboardModule,
     ExportModule,
+    PacerModule,
   ],
 })
 export class AppModule {}
