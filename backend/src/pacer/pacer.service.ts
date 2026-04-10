@@ -13,6 +13,9 @@ export class PacerService {
     if (!sprint) {
       throw new BadRequestException('Sprint not found');
     }
+    if (!sprint.active) {
+      throw new BadRequestException('Só é permitido votar no PACER da sprint atual.');
+    }
 
     const evaluateeIds = Object.keys(evaluations);
     

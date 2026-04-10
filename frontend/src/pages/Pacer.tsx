@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api } from '../lib/api';
-import { Users, Star, Loader2, Info } from 'lucide-react';
+import { Users, Star, Loader2, Info, Download } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 type Sprint = { id: string; name: string; active: boolean };
@@ -102,7 +102,34 @@ export default function Pacer() {
     }
   };
 
+  const handleExportMarkdown = () => {
+    if (results.length === 0) return;
+    
+    const activeSprint = sprints.find(s => s.id === activeSprintId);
+    const sprintName = activeSprint ? activeSprint.name : 'Sprint';
+
+    let markdown = `# Resultados PACER - ${sprintName}\n\n`;
+    markdown += `| Nome | Proatividade | Autonomia | Colaboração | Entrega | Votos |\n`;
+    markdown += `|---|:---:|:---:|:---:|:---:|:---:|\n`;
+    
+    results.forEach(r => {
+      markdown += `| ${r.name} | ${r.proactivity} | ${r.autonomy} | ${r.collaboration} | ${r.delivery} | ${r.evaluationsCount} |\n`;
+    });
+
+    const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `pacer-resultados-${sprintName.replace(/\s+/g, '-').toLowerCase()}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   if (loading) return <div className="flex items-center justify-center p-12 text-slate-500 "><Loader2 className="w-8 h-8 animate-spin" /></div>;
+
+  const isSelectedSprintActive = sprints.find(s => s.id === activeSprintId)?.active;
 
   return (
     <div className="space-y-6">
@@ -156,29 +183,37 @@ export default function Pacer() {
           {members.length === 0 ? (
             <div className="text-center p-8 text-slate-500">Nenhum membro ativo cadastrado.</div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {members.map(m => (
-                <div key={m.id} className={`bg-slate-900 border ${m.id === user?.id ? 'border-sky-500/50 shadow-md shadow-sky-900/10' : 'border-slate-800'} rounded-xl p-4`}>
-                   <h3 className="font-semibold text-slate-200 mb-4 flex items-center gap-2">
-                     <Users className="w-4 h-4 text-slate-500" />
-                     {m.name} {m.id === user?.id && <span className="text-xs bg-sky-500/20 text-sky-400 px-2 py-0.5 rounded-full font-medium">Você</span>}
-                   </h3>
-                   
-                   <div className="grid grid-cols-2 gap-3">
-                      <LabelledInput memberId={m.id} field="proactivity" label="Proatividade" val={evaluations[m.id]?.proactivity || 0} onChange={handleScoreChange} />
-                      <LabelledInput memberId={m.id} field="autonomy" label="Autonomia" val={evaluations[m.id]?.autonomy || 0} onChange={handleScoreChange} />
-                      <LabelledInput memberId={m.id} field="collaboration" label="Colaboração" val={evaluations[m.id]?.collaboration || 0} onChange={handleScoreChange} />
-                      <LabelledInput memberId={m.id} field="delivery" label="Entrega" val={evaluations[m.id]?.delivery || 0} onChange={handleScoreChange} />
-                   </div>
+            <>
+              {!isSelectedSprintActive && (
+                <div className="bg-amber-400/10 border border-amber-400/20 text-amber-500 p-4 rounded-xl flex items-start gap-3">
+                   <Info className="w-5 h-5 mt-0.5 shrink-0" />
+                   <p className="text-sm">A votação só é permitida na sprint atual (ativa).</p>
                 </div>
-              ))}
-            </div>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {members.map(m => (
+                  <div key={m.id} className={`bg-slate-900 border ${m.id === user?.id ? 'border-sky-500/50 shadow-md shadow-sky-900/10' : 'border-slate-800'} rounded-xl p-4`}>
+                     <h3 className="font-semibold text-slate-200 mb-4 flex items-center gap-2">
+                       <Users className="w-4 h-4 text-slate-500" />
+                       {m.name} {m.id === user?.id && <span className="text-xs bg-sky-500/20 text-sky-400 px-2 py-0.5 rounded-full font-medium">Você</span>}
+                     </h3>
+                     
+                     <div className="grid grid-cols-2 gap-3">
+                        <LabelledInput memberId={m.id} field="proactivity" label="Proatividade" val={evaluations[m.id]?.proactivity || 0} onChange={handleScoreChange} />
+                        <LabelledInput memberId={m.id} field="autonomy" label="Autonomia" val={evaluations[m.id]?.autonomy || 0} onChange={handleScoreChange} />
+                        <LabelledInput memberId={m.id} field="collaboration" label="Colaboração" val={evaluations[m.id]?.collaboration || 0} onChange={handleScoreChange} />
+                        <LabelledInput memberId={m.id} field="delivery" label="Entrega" val={evaluations[m.id]?.delivery || 0} onChange={handleScoreChange} />
+                     </div>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
           
           <div className="flex justify-end pt-4">
             <button
               onClick={handleSubmit}
-              disabled={saving || sprints.length === 0}
+              disabled={saving || sprints.length === 0 || !isSelectedSprintActive}
               className="bg-slate-100 hover:bg-white text-slate-900 font-bold py-2.5 px-8 rounded-lg shadow-lg shadow-slate-900/20 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Salvar Avaliação'}
@@ -194,8 +229,18 @@ export default function Pacer() {
                 Nenhum resultado recebido para esta sprint ainda.
              </div>
           ) : (
-            <div className="overflow-x-auto w-full bg-slate-900 border border-slate-800 rounded-xl">
-               <table className="w-full text-left text-sm whitespace-nowrap">
+            <div className="flex flex-col gap-4">
+               <div className="flex justify-end">
+                 <button
+                   onClick={handleExportMarkdown}
+                   className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium py-2 px-4 rounded-lg transition-colors flex items-center gap-2 border border-slate-700 hover:border-slate-600"
+                 >
+                   <Download className="w-4 h-4" />
+                   Exportar Markdown
+                 </button>
+               </div>
+               <div className="overflow-x-auto w-full bg-slate-900 border border-slate-800 rounded-xl">
+                  <table className="w-full text-left text-sm whitespace-nowrap">
                   <thead className="bg-slate-800/80 text-slate-400">
                      <tr>
                         <th className="px-4 py-3 font-semibold rounded-tl-xl">Nome</th>
@@ -223,6 +268,7 @@ export default function Pacer() {
                   </tbody>
                </table>
             </div>
+          </div>
           )}
         </div>
       )}
