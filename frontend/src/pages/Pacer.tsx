@@ -8,6 +8,21 @@ type Member = { id: string; name: string; active: boolean };
 type PacerScore = { proactivity: number; autonomy: number; collaboration: number; delivery: number };
 type PacerResult = { userId: string; name: string; active: boolean; evaluationsCount: number; proactivity: number; autonomy: number; collaboration: number; delivery: number; };
 
+const LabelledInput = ({ memberId, field, label, val, onChange }: { memberId: string, field: keyof PacerScore, label: string, val: number, onChange: (memberId: string, field: keyof PacerScore, value: number) => void }) => {
+  return (
+    <div className="flex flex-col">
+      <label className="text-xs text-slate-400 mb-1">{label}</label>
+      <input 
+        type="number" 
+        min="0" max="3" 
+        value={val}
+        onChange={(e) => onChange(memberId, field, parseInt(e.target.value) || 0)}
+        className="bg-slate-950 border border-slate-700 text-sm rounded-lg px-3 py-2 focus:ring-slate-500 focus:border-slate-500 w-full"
+      />
+    </div>
+  );
+};
+
 export default function Pacer() {
   const { user } = useAuth();
   const [sprints, setSprints] = useState<Sprint[]>([]);
@@ -87,22 +102,6 @@ export default function Pacer() {
     }
   };
 
-  const LabelledInput = ({ memberId, field, label }: { memberId: string, field: keyof PacerScore, label: string }) => {
-    const val = evaluations[memberId]?.[field] || 0;
-    return (
-      <div className="flex flex-col">
-        <label className="text-xs text-slate-400 mb-1">{label}</label>
-        <input 
-          type="number" 
-          min="0" max="3" 
-          value={val}
-          onChange={(e) => handleScoreChange(memberId, field, parseInt(e.target.value) || 0)}
-          className="bg-slate-950 border border-slate-700 text-sm rounded-lg px-3 py-2 focus:ring-slate-500 focus:border-slate-500 w-full"
-        />
-      </div>
-    );
-  };
-
   if (loading) return <div className="flex items-center justify-center p-12 text-slate-500 "><Loader2 className="w-8 h-8 animate-spin" /></div>;
 
   return (
@@ -166,10 +165,10 @@ export default function Pacer() {
                    </h3>
                    
                    <div className="grid grid-cols-2 gap-3">
-                      <LabelledInput memberId={m.id} field="proactivity" label="Proatividade" />
-                      <LabelledInput memberId={m.id} field="autonomy" label="Autonomia" />
-                      <LabelledInput memberId={m.id} field="collaboration" label="Colaboração" />
-                      <LabelledInput memberId={m.id} field="delivery" label="Entrega" />
+                      <LabelledInput memberId={m.id} field="proactivity" label="Proatividade" val={evaluations[m.id]?.proactivity || 0} onChange={handleScoreChange} />
+                      <LabelledInput memberId={m.id} field="autonomy" label="Autonomia" val={evaluations[m.id]?.autonomy || 0} onChange={handleScoreChange} />
+                      <LabelledInput memberId={m.id} field="collaboration" label="Colaboração" val={evaluations[m.id]?.collaboration || 0} onChange={handleScoreChange} />
+                      <LabelledInput memberId={m.id} field="delivery" label="Entrega" val={evaluations[m.id]?.delivery || 0} onChange={handleScoreChange} />
                    </div>
                 </div>
               ))}
