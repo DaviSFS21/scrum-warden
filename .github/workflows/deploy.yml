@@ -168,11 +168,6 @@ jobs:
             cd backend
             set -a && source .env && set +a
             
-            # --- Auto-fix for failed PacerEvaluation migration ---
-            docker container exec scrum-warden-db psql -U scrumwarden -d scrumwarden -c 'DROP TABLE IF EXISTS "PacerEvaluation" CASCADE;' || true
-            npx prisma migrate resolve --rolled-back 20260409220027_pacer_evaluation || true
-            # -----------------------------------------------------
-
             npx prisma migrate deploy
 
             # Restart backend with PM2 (env vars inherited from sourced .env)
